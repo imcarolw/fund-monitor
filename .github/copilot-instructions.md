@@ -1,0 +1,12 @@
+- [x] Verify that the `copilot-instructions.md` file in the `.github` directory is created.
+- [x] Clarify Project Requirements — implemented as a simple installable React + TypeScript PWA for phone use.
+- [x] Scaffold the Project — created a minimal Vite-compatible structure manually because the latest generator was incompatible with the installed Node version.
+- [x] Customize the Project — added fund basket tracking, quote refresh, local storage, and a mobile-friendly UI.
+- [x] Install Required Extensions — no extensions were required by project setup guidance.
+- [x] Compile the Project — dependencies installed and production build succeeded.
+- [x] Create and Run Task — skipped because `npm` scripts already cover development and build workflows.
+- [x] Launch the Project — skipped because launch/debug confirmation was not requested.
+- [x] Ensure Documentation is Complete — updated `README.md` and cleaned this file of HTML comments.
+
+- Keep communication concise and focused.
+- Follow development best practices.

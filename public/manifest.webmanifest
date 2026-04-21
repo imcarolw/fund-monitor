@@ -1,0 +1,23 @@
+{
+  "name": "Fund Look-Through Monitor",
+  "short_name": "Fund Monitor",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#020817",
+  "theme_color": "#0f172a",
+  "description": "Monitor your funds through real-time stock baskets.",
+  "icons": [
+    {
+      "src": "/icon-192.svg",
+      "sizes": "192x192",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    },
+    {
+      "src": "/icon-512.svg",
+      "sizes": "512x512",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    }
+  ]
+}
