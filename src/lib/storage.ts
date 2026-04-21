@@ -1,6 +1,6 @@
 const TRACKED_FUNDS_STORAGE_KEY = 'fund-look-through-monitor-direct-funds';
 
-const sampleTrackedFundCodes = ['161725', '481010', '160517'];
+const sampleTrackedFundCodes = ['161725'];
 
 export function loadTrackedFundCodes(): string[] {
   try {

@@ -180,7 +180,7 @@ export default function App() {
         <section className="card form-card">
           <div className="section-title">
             <h2>Track fund codes</h2>
-            <p>Examples: 161725, 481010, 160517</p>
+            <p>Example: 161725</p>
           </div>
 
           <label>

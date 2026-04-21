@@ -4,7 +4,7 @@ A very small PWA you can install on your phone to monitor a clean list of Chines
 
 ## What it does
 
-- Track multiple fund codes directly, such as `161725`, `481010`, and `160517`
+- Track fund codes directly, such as `161725`
 - Auto-refresh direct fund estimated rise/fall rates
 - Save everything in local storage
 - Install to your phone home screen as a PWA
@@ -56,6 +56,7 @@ Notes:
 - Data is stored locally on that device, so your phone and laptop do not automatically sync yet.
 - If you clear Safari site data, your saved baskets may be removed.
 - If your repository name changes, update `base` in `vite.config.ts` to match the new repo path.
+- If you installed an older broken home-screen shortcut before this fix, delete it and add it again after the new deployment finishes.
 
 ## Direct fund watchlist
 
@@ -65,8 +66,6 @@ Examples:
 
 ```text
 161725
-481010
-160517
 ```
 
 The app refreshes their estimated intraday rise/fall automatically while it is open.

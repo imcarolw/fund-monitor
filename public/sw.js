@@ -1,9 +1,13 @@
 const CACHE_NAME = 'fund-monitor-v1';
+const APP_BASE = self.registration?.scope ?? self.location.origin + '/';
 
 self.addEventListener('install', (event) => {
   self.skipWaiting();
   event.waitUntil(
-    caches.open(CACHE_NAME).then((cache) => cache.addAll(['/', '/manifest.webmanifest'])).catch(() => undefined),
+    caches
+      .open(CACHE_NAME)
+      .then((cache) => cache.addAll([APP_BASE, `${APP_BASE}manifest.webmanifest`]))
+      .catch(() => undefined),
   );
 });
 
