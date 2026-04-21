@@ -22,37 +22,30 @@ npm run dev
 
 Then open the local URL in your browser. On a phone, open the deployed URL in Safari/Chrome and choose **Add to Home Screen**.
 
-## Deploy to Vercel
+## Deploy with GitHub Pages
 
-This app is ready to deploy as a static site.
+This repo is configured to deploy with **GitHub Pages** using GitHub Actions, so you do not need a Vercel account.
 
-### Easiest path: Vercel dashboard
+### One-time GitHub setup
 
-1. Push this project to a GitHub repository.
-2. Sign in to Vercel.
-3. Click **Add New Project**.
-4. Import the GitHub repository.
-5. Keep the detected settings:
-	- Framework: `Vite`
-	- Build command: `npm run build`
-	- Output directory: `dist`
-6. Click **Deploy**.
+1. Open your repo on GitHub: `https://github.com/imcarolw/fund-monitor`
+2. Go to **Settings** → **Pages**
+3. Under **Build and deployment**, set **Source** to **GitHub Actions**
+4. Save if needed
 
-After deployment, open the Vercel URL in **Safari on your iPhone**, tap **Share**, then tap **Add to Home Screen**.
+### Trigger deployment
 
-### Optional: Vercel CLI
+1. Push your latest code to the `main` branch
+2. Open the **Actions** tab in GitHub
+3. Wait for the **Deploy to GitHub Pages** workflow to finish
 
-If you prefer deploying from the terminal:
+Your site should be published at:
 
-```bash
-npm run deploy:vercel
-```
-
-The first run will ask you to sign in and link the project.
+`https://imcarolw.github.io/fund-monitor/`
 
 ## Install on iPhone
 
-1. Open the deployed HTTPS URL in **Safari**.
+1. Open `https://imcarolw.github.io/fund-monitor/` in **Safari**.
 2. Tap the **Share** button.
 3. Tap **Add to Home Screen**.
 4. Tap **Add**.
@@ -62,6 +55,7 @@ Notes:
 - Use **Safari** for the best install behavior on iPhone.
 - Data is stored locally on that device, so your phone and laptop do not automatically sync yet.
 - If you clear Safari site data, your saved baskets may be removed.
+- If your repository name changes, update `base` in `vite.config.ts` to match the new repo path.
 
 ## Direct fund watchlist
 
