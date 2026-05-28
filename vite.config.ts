@@ -7,12 +7,5 @@ export default defineConfig({
   server: {
     host: '0.0.0.0',
     port: 5173,
-    proxy: {
-      '/yahoo-finance': {
-        target: 'https://query1.finance.yahoo.com',
-        changeOrigin: true,
-        rewrite: (path) => path.replace(/^\/yahoo-finance/, ''),
-      },
-    },
   },
 });

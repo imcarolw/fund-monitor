@@ -1,48 +1,34 @@
 import type { QuoteResult } from '../types';
 
-const GOLD_SYMBOL = 'GC=F';
-const USDCNY_SYMBOL = 'USDCNY=X';
 const TROY_OZ_TO_GRAM = 31.1035;
 
-function yahooFinanceUrl(path: string): string {
-  // In dev, Vite proxies /yahoo-finance → Yahoo Finance to avoid CORS.
-  // In production, Vercel rewrites /yahoo-finance → /api/yahoo-finance (serverless proxy).
-  return `/yahoo-finance${path}`;
-}
-
-async function fetchMeta(symbol: string): Promise<Record<string, unknown>> {
-  const url = yahooFinanceUrl(`/v8/finance/chart/${encodeURIComponent(symbol)}?interval=1m&range=1d&includePrePost=false`);
-  const response = await fetch(url);
-  if (!response.ok) throw new Error(`Request failed for ${symbol} (${response.status})`);
-  const data = await response.json();
-  const meta = data?.chart?.result?.[0]?.meta;
-  if (!meta) throw new Error(`No data available for ${symbol}`);
-  return meta as Record<string, unknown>;
-}
-
 export async function fetchGoldPrice(): Promise<QuoteResult> {
-  const [goldMeta, cnyMeta] = await Promise.all([
-    fetchMeta(GOLD_SYMBOL),
-    fetchMeta(USDCNY_SYMBOL),
+  const [metalsRes, fxRes] = await Promise.all([
+    fetch('https://api.metals.live/v1/spot'),
+    fetch('https://api.frankfurter.app/latest?from=USD&to=CNY'),
   ]);
 
-  const price = Number(goldMeta.regularMarketPrice);
-  const previousClose = Number(goldMeta.chartPreviousClose);
+  if (!metalsRes.ok) throw new Error(`Metals API error (${metalsRes.status})`);
+  if (!fxRes.ok) throw new Error(`FX rate API error (${fxRes.status})`);
 
-  if (!price || !previousClose) throw new Error('Gold price data unavailable');
+  const metals = await metalsRes.json();
+  const fx = await fxRes.json();
 
-  const usdCnyRate = Number(cnyMeta.regularMarketPrice) || 0;
-  const changePercent = previousClose === 0 ? 0 : ((price - previousClose) / previousClose) * 100;
-  const cnyPerGram = usdCnyRate > 0 ? (price * usdCnyRate) / TROY_OZ_TO_GRAM : undefined;
+  // metals.live returns [{ gold, silver, ... }]
+  const goldUsdPerOz = Number(Array.isArray(metals) ? metals[0]?.gold : metals?.gold);
+  if (!goldUsdPerOz) throw new Error('Gold price data unavailable');
+
+  const usdCnyRate = Number(fx?.rates?.CNY) || 0;
+  const cnyPerGram = usdCnyRate > 0 ? (goldUsdPerOz * usdCnyRate) / TROY_OZ_TO_GRAM : undefined;
 
   return {
-    symbol: GOLD_SYMBOL,
-    shortName: (goldMeta.shortName as string) ?? 'Gold Futures',
-    currency: (goldMeta.currency as string) ?? 'USD',
-    price,
-    previousClose,
-    changePercent,
+    symbol: 'XAU',
+    shortName: 'Gold Spot',
+    currency: 'USD',
+    price: goldUsdPerOz,
+    previousClose: goldUsdPerOz, // spot API doesn't provide prev close
+    changePercent: 0,
     cnyPerGram,
-    updatedAt: new Date(((goldMeta.regularMarketTime as number) ?? Math.floor(Date.now() / 1000)) * 1000).toISOString(),
+    updatedAt: new Date().toISOString(),
   };
 }
