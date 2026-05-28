@@ -19,6 +19,7 @@ export type QuoteResult = {
   previousClose: number;
   changePercent: number;
   updatedAt: string;
+  cnyPerGram?: number;
 };
 
 export type FundEstimate = {

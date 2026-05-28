@@ -256,6 +256,55 @@ input {
   color: #4ade80;
 }
 
+.gold-card {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 1rem 1.2rem;
+  margin-bottom: 1rem;
+  border-color: rgba(234, 179, 8, 0.35);
+  background: rgba(120, 90, 0, 0.15);
+}
+
+.gold-info {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+.gold-price-row {
+  display: flex;
+  align-items: baseline;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+}
+
+.gold-price {
+  font-size: 1.5rem;
+  color: #fbbf24;
+}
+
+.gold-cny {
+  font-size: 1.7rem;
+}
+
+.gold-unit {
+  font-size: 1rem;
+  font-weight: 400;
+  color: #fbbf24;
+  margin-left: 0.1em;
+}
+
+.gold-usd {
+  font-size: 0.9rem;
+}
+
+.gold-error {
+  color: #fca5a5;
+  font-size: 0.9rem;
+}
+
 @media (max-width: 840px) {
   .hero,
   .layout-grid,
