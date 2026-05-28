@@ -1,8 +1,7 @@
 import { useEffect, useMemo, useState } from 'react';
 import { fetchFundEstimates, isFundCode } from './lib/fundEstimate.ts';
-import { fetchGoldPrice } from './lib/goldPrice';
 import { loadTrackedFundCodes, saveTrackedFundCodes } from './lib/storage';
-import type { FundEstimate, QuoteResult } from './types';
+import type { FundEstimate } from './types';
 
 function formatPercent(value: number): string {
   const sign = value > 0 ? '+' : '';
@@ -30,8 +29,6 @@ export default function App() {
   const [fundError, setFundError] = useState('');
   const [draggedFundCode, setDraggedFundCode] = useState<string | null>(null);
   const [dragOverFundCode, setDragOverFundCode] = useState<string | null>(null);
-  const [goldPrice, setGoldPrice] = useState<QuoteResult | null>(null);
-  const [goldError, setGoldError] = useState('');
 
   useEffect(() => {
     saveTrackedFundCodes(trackedFundCodes);
@@ -43,34 +40,22 @@ export default function App() {
 
     const messages: string[] = [];
 
-    const [fundResult] = await Promise.allSettled([
-      (async () => {
-        if (trackedFundCodes.length > 0) {
-          const { estimates, errors } = await fetchFundEstimates(trackedFundCodes);
-          setTrackedFundEstimates(estimates);
-          messages.push(...Object.values(errors));
-        } else {
-          setTrackedFundEstimates({});
-        }
-      })(),
-      (async () => {
-        try {
-          const gold = await fetchGoldPrice();
-          setGoldPrice(gold);
-          setGoldError('');
-        } catch (err) {
-          setGoldError(err instanceof Error ? err.message : 'Failed to fetch gold price');
-        }
-      })(),
-    ]);
+    try {
+      if (trackedFundCodes.length > 0) {
+        const { estimates, errors } = await fetchFundEstimates(trackedFundCodes);
+        setTrackedFundEstimates(estimates);
+        messages.push(...Object.values(errors));
+      } else {
+        setTrackedFundEstimates({});
+      }
 
-    if (fundResult.status === 'rejected') {
-      messages.push(fundResult.reason instanceof Error ? fundResult.reason.message : 'Failed to refresh fund data');
+      setLastUpdated(new Date().toISOString());
+      setFundError(messages.join(' '));
+    } catch (refreshError) {
+      setFundError(refreshError instanceof Error ? refreshError.message : 'Failed to refresh fund data');
+    } finally {
+      setLoading(false);
     }
-
-    setLastUpdated(new Date().toISOString());
-    setFundError(messages.join(' '));
-    setLoading(false);
   };
 
   useEffect(() => {
@@ -187,32 +172,6 @@ export default function App() {
           <span className="label">Falling now</span>
           <strong className="down">{summary.falling}</strong>
         </article>
-      </section>
-
-      <section className="card gold-card">
-        <div className="gold-info">
-          <span className="label">Gold (GC=F)</span>
-          {goldPrice ? (
-            <div className="gold-price-row">
-              {goldPrice.cnyPerGram != null && (
-                <strong className="gold-price gold-cny">
-                  ¥{goldPrice.cnyPerGram.toFixed(2)}<span className="gold-unit">/克</span>
-                </strong>
-              )}
-              <span className="gold-usd subtle">${goldPrice.price.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}/oz</span>
-              <span className={goldPrice.changePercent >= 0 ? 'up' : 'down'}>
-                {goldPrice.changePercent >= 0 ? '+' : ''}{goldPrice.changePercent.toFixed(2)}%
-              </span>
-            </div>
-          ) : goldError ? (
-            <span className="gold-error">{goldError}</span>
-          ) : (
-            <span className="subtle">Loading…</span>
-          )}
-        </div>
-        {goldPrice && (
-          <span className="timestamp">Updated {timeLabel(goldPrice.updatedAt)}</span>
-        )}
       </section>
 
       {fundError ? <section className="card error-banner">{fundError}</section> : null}
