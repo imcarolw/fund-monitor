@@ -5,9 +5,9 @@ const USDCNY_SYMBOL = 'USDCNY=X';
 const TROY_OZ_TO_GRAM = 31.1035;
 
 function yahooFinanceUrl(path: string): string {
-  const isDev = import.meta.env.DEV;
-  const base = isDev ? '/yahoo-finance' : 'https://query1.finance.yahoo.com';
-  return `${base}${path}`;
+  // In dev, Vite proxies /yahoo-finance → Yahoo Finance to avoid CORS.
+  // In production, Vercel rewrites /yahoo-finance → /api/yahoo-finance (serverless proxy).
+  return `/yahoo-finance${path}`;
 }
 
 async function fetchMeta(symbol: string): Promise<Record<string, unknown>> {
