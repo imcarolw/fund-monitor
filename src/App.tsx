@@ -257,7 +257,7 @@ export default function App() {
                     </strong>
                     <span>{estimate ? estimate.estimatedNav.toFixed(4) : '--'}</span>
                     <span>{estimate ? estimate.lastNav.toFixed(4) : '--'}</span>
-                    <span>{estimate?.estimateTime || '--'}</span>
+                    <span>{estimate ? `${estimate.estimateTime || '--'}${estimate.live ? '' : ' (close)'}` : '--'}</span>
                     <div className="row-actions">
                       <button className="ghost compact-button" type="button" onClick={() => removeTrackedFund(code)}>
                         Remove

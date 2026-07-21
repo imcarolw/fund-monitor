@@ -1,26 +1,3 @@
-export type Holding = {
-  code: string;
-  name: string;
-  weight: number;
-};
-
-export type FundBasket = {
-  id: string;
-  name: string;
-  amount: number;
-  holdings: Holding[];
-};
-
-export type QuoteResult = {
-  symbol: string;
-  shortName: string;
-  currency: string;
-  price: number;
-  previousClose: number;
-  changePercent: number;
-  updatedAt: string;
-};
-
 export type FundEstimate = {
   fundCode: string;
   name: string;
@@ -29,4 +6,7 @@ export type FundEstimate = {
   estimatedNav: number;
   estimatedChangePercent: number;
   estimateTime: string;
+  // true = live intraday estimate (ETF/LOF); false = last settled NAV (open-end funds
+  // no longer publish intraday estimates).
+  live: boolean;
 };
