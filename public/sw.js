@@ -1,4 +1,4 @@
-const CACHE_NAME = 'fund-monitor-v1';
+const CACHE_NAME = 'fund-monitor-v2';
 const APP_BASE = self.registration?.scope ?? self.location.origin + '/';
 
 self.addEventListener('install', (event) => {
@@ -30,17 +30,15 @@ self.addEventListener('fetch', (event) => {
     return;
   }
 
+  // Network-first: always try the network so newly deployed code is picked up,
+  // and fall back to the cache only when offline.
   event.respondWith(
-    caches.match(request).then((cached) => {
-      if (cached) {
-        return cached;
-      }
-
-      return fetch(request).then((response) => {
+    fetch(request)
+      .then((response) => {
         const clone = response.clone();
         caches.open(CACHE_NAME).then((cache) => cache.put(request, clone));
         return response;
-      });
-    }),
+      })
+      .catch(() => caches.match(request)),
   );
 });
