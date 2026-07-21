@@ -253,11 +253,21 @@ export default function App() {
                       {estimate?.name ?? 'Waiting for estimate…'}
                     </span>
                     <strong className={estimate ? (estimate.estimatedChangePercent >= 0 ? 'up' : 'down') : ''}>
-                      {estimate ? formatPercent(estimate.estimatedChangePercent) : '--'}
+                      {estimate ? `${estimate.approx ? '≈' : ''}${formatPercent(estimate.estimatedChangePercent)}` : '--'}
                     </strong>
                     <span>{estimate ? estimate.estimatedNav.toFixed(4) : '--'}</span>
                     <span>{estimate ? estimate.lastNav.toFixed(4) : '--'}</span>
-                    <span>{estimate ? `${estimate.estimateTime || '--'}${estimate.live ? '' : ' (close)'}` : '--'}</span>
+                    <span>
+                      {estimate
+                        ? `${estimate.estimateTime || '--'}${
+                            estimate.live
+                              ? estimate.approx
+                                ? ` · est ~${Math.round(estimate.coverage ?? 0)}%`
+                                : ''
+                              : ' (close)'
+                          }`
+                        : '--'}
+                    </span>
                     <div className="row-actions">
                       <button className="ghost compact-button" type="button" onClick={() => removeTrackedFund(code)}>
                         Remove

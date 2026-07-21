@@ -1,4 +1,14 @@
 import type { FundEstimate } from '../types';
+import { computeEstimate } from './fundHoldings';
+
+function currentTimeLabel(): string {
+  const now = new Date();
+  const pad = (value: number) => String(value).padStart(2, '0');
+  return (
+    `${now.getFullYear()}-${pad(now.getMonth() + 1)}-${pad(now.getDate())} ` +
+    `${pad(now.getHours())}:${pad(now.getMinutes())}`
+  );
+}
 
 type ValuationExpansion = {
   FCODE?: string;
@@ -120,13 +130,40 @@ export async function fetchFundEstimate(fundCode: string): Promise<FundEstimate>
     throw new Error('Fund code must be 6 digits.');
   }
 
-  const estimate = (await fetchLiveEstimate(normalized)) ?? (await fetchLastNav(normalized));
+  // 1. On-exchange funds (ETF/LOF) publish a precise live valuation.
+  const live = await fetchLiveEstimate(normalized);
+  if (live) {
+    return live;
+  }
 
-  if (!estimate) {
+  // 2. Everything else falls back to the last settled NAV.
+  const base = await fetchLastNav(normalized);
+  if (!base) {
     throw new Error(`Failed to load fund estimate for ${normalized}`);
   }
 
-  return estimate;
+  // 3. If the platform already had an intraday estimate, keep it.
+  if (base.live) {
+    return base;
+  }
+
+  // 4. Otherwise compute a real-time approximation from the fund's top-10
+  //    holdings and live stock quotes.
+  const computed = await computeEstimate(normalized);
+  if (computed) {
+    return {
+      ...base,
+      estimatedChangePercent: computed.changePercent,
+      estimatedNav: base.lastNav * (1 + computed.changePercent / 100),
+      estimateTime: currentTimeLabel(),
+      live: true,
+      approx: true,
+      coverage: computed.coverage,
+    };
+  }
+
+  // 5. No intraday data available: show the last settled NAV.
+  return base;
 }
 
 export async function fetchFundEstimates(fundCodes: string[]): Promise<{
