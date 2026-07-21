@@ -82,10 +82,12 @@ async function fetchLiveEstimate(code: string): Promise<FundEstimate | null> {
 }
 
 // Open-end funds no longer publish intraday estimates, so fall back to the last
-// settled NAV and its change. This endpoint covers every fund type.
+// settled NAV and its change. This endpoint covers every fund type. The
+// tiantianfunds host is used (mirrors fundmobapi.eastmoney.com) because some
+// networks block the eastmoney.com domain.
 async function fetchLastNav(code: string): Promise<FundEstimate | null> {
   const url =
-    `https://fundmobapi.eastmoney.com/FundMNewApi/FundMNFInfo` +
+    `https://fundmobapi.tiantianfunds.com/FundMNewApi/FundMNFInfo` +
     `?product=EFund&plat=Iphone&deviceid=web&version=6.4.0&Fcodes=${code}` +
     `&Fields=FCODE,SHORTNAME,NAV,NAVCHGRT,PDATE,GSZ,GSZZL,GZTIME&rt=${Date.now()}`;
   const payload = (await fetchJson(url)) as { Datas?: FundBaseInfo[] } | null;
